@@ -1,46 +1,80 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const express = require('express')
+const path = require('path')
+const favicon = require('serve-favicon')
+const morgan = require('morgan')
+const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
+const mongo = require('mongodb')
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+const index = require('./routes/index')
+const users = require('./routes/users')
+const query = require('./routes/query')
 
-var app = express();
+const config = require('./config')
+const APIError = require('./libs/APIError')
+const logger = require('./libs/utils').logger
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+const app = express()
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/users', users);
+logger.info('Starting in', app.get('env'), 'mode.')
+logger.info(`Connecting to ${config.MongoURI} ...`)
+mongo.connect(config.MongoURI, config.MongoConf, function (err, DB) {
+  if (err) {
+    logger.error('err', err)
+    throw err
+  }
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+  logger.info('Connected to DB.')
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+  // view engine setup
+  app.set('views', path.join(__dirname, 'views'))
+  app.set('view engine', 'jade')
 
-module.exports = app;
+  app.use(morgan('common'))
+  app.use(bodyParser.json())
+  app.use(bodyParser.urlencoded({
+    extended: false
+  }))
+  app.use(cookieParser())
+  app.use(express.static(path.join(__dirname, 'public')))
+  app.use(function (req, res, next) {
+    req.DB = DB
+    return next()
+  })
+
+  // app.use('/', index)
+  // app.use('/users', users)
+  app.use('/query', query)
+
+  // catch 404 and forward to error handler
+  app.use(function (req, res, next) {
+    let err = new APIError('Not Found', 'Resource not found', 404)
+    next(err)
+  })
+
+  // error handler
+  app.use(function (err, req, res, next) {
+
+    if(err instanceof APIError) {
+      res.status(err.code || 500)
+      return res.json(err)
+    }
+
+    // render the error page
+    res.status(err.status || 500)
+    // res.render('error')
+    res.json({
+      message: err.message,
+      error: req.app.get('env') === 'development' ? err : {}
+    })
+  })
+})
+
+process.on('unhandledRejection', function(err) {
+  logger.error('Unhandled promise rejection: ', err)
+  throw err
+})
+
+module.exports = app

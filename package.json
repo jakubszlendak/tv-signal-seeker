@@ -3,17 +3,23 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "nodemon ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
     "cookie-parser": "~1.4.3",
-    "debug": "~2.6.3",
+    "debug": "^2.6.8",
     "express": "~4.15.2",
     "jade": "~1.11.0",
     "minimist": "^1.2.0",
     "mongodb": "^2.2.31",
     "morgan": "~1.8.1",
-    "serve-favicon": "~2.4.2"
+    "node-validator": "^0.1.27",
+    "serve-favicon": "~2.4.2",
+    "tracer": "^0.8.11",
+    "validator": "^8.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }
