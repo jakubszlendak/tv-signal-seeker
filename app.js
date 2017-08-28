@@ -68,6 +68,7 @@ mongo.connect(config.MongoURI, config.MongoConfig, function (err, DB) {
       res.status(401)
       return res.json({
         name: err.name,
+        error: 'Unauthorized',
         message: 'Invalid authorization token'
       })
     }

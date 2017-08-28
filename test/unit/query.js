@@ -26,7 +26,7 @@ describe('libs/api/query.js', () => {
                 .catch((err)=>{
                     expect(err.name).to.be.equal('APIError')
                     expect(err.code).to.be.equal(400)
-                    expect(err.error).to.be.equal('Invalid Query')
+                    expect(err.error).to.be.equal('InvalidQueryError')
                     expect(err.message).to.be.equal('Invalid latitude value')
                     done()
                 })
@@ -43,7 +43,7 @@ describe('libs/api/query.js', () => {
                 .catch((err)=>{
                     expect(err.name).to.be.equal('APIError')
                     expect(err.code).to.be.equal(400)
-                    expect(err.error).to.be.equal('Invalid Query')
+                    expect(err.error).to.be.equal('InvalidQueryError')
                     expect(err.message).to.be.equal('Invalid latitude value')
                     done()
                 })
@@ -60,7 +60,7 @@ describe('libs/api/query.js', () => {
                 .catch((err)=>{
                     expect(err.name).to.be.equal('APIError')
                     expect(err.code).to.be.equal(400)
-                    expect(err.error).to.be.equal('Invalid Query')
+                    expect(err.error).to.be.equal('InvalidQueryError')
                     expect(err.message).to.be.equal('Invalid latitude value')
                     done()
                 })
@@ -77,7 +77,7 @@ describe('libs/api/query.js', () => {
                 .catch((err)=>{
                     expect(err.name).to.be.equal('APIError')
                     expect(err.code).to.be.equal(400)
-                    expect(err.error).to.be.equal('Invalid Query')
+                    expect(err.error).to.be.equal('InvalidQueryError')
                     expect(err.message).to.be.equal('Invalid longitude value')
                     done()
                 })
@@ -94,7 +94,7 @@ describe('libs/api/query.js', () => {
                 .catch((err)=>{
                     expect(err.name).to.be.equal('APIError')
                     expect(err.code).to.be.equal(400)
-                    expect(err.error).to.be.equal('Invalid Query')
+                    expect(err.error).to.be.equal('InvalidQueryError')
                     expect(err.message).to.be.equal('Invalid latitude value')
                     done()
                 })
@@ -111,7 +111,7 @@ describe('libs/api/query.js', () => {
                 .catch((err)=>{
                     expect(err.name).to.be.equal('APIError')
                     expect(err.code).to.be.equal(400)
-                    expect(err.error).to.be.equal('Invalid Query')
+                    expect(err.error).to.be.equal('InvalidQueryError')
                     expect(err.message).to.be.equal('Invalid latitude value')
                     done()
                 })
@@ -139,6 +139,7 @@ describe('libs/api/query.js', () => {
                     expect(query.coverage.$geoIntersects.$geometry.coordinates[1]).to.be.equal(12.1234)
                     expect(projection).to.have.property('coverage', 0)
                     expect(projection).to.have.property('_id', 0)
+                    expect(projection).to.have.property('station.type', 0)
                     
                     // check result
                     expect(result.stations).to.be.deep.equal([])

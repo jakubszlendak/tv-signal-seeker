@@ -12,7 +12,7 @@ describe('libs/auth.js', () => {
         })
         it('should not create guard function if no scope given', () => {
             try {
-                let fn = guardScope('')
+                guardScope('')
             } catch (error) {
                 expect(error).to.be.an('Error')
                 expect(error.message).to.be.equal('Invalid scope value: cannot be empty!')

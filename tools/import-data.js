@@ -5,19 +5,20 @@ const config = require('../config')
 
 if (!argv.source) throw new Error('no source file given')
 
+let collection = argv.collection || 'antennas'
 
 let DB = null
 mongodb.connect(config.MongoURI)
     .then((db) => {
         DB = db
         if(argv.f) {
-            console.log('Removing all documents...')
-            return DB.collection('antennas').remove({})
+            console.log('Removing all documents...') //eslint-disable-line
+            return DB.collection(collection).remove({})
         } else return Promise.resolve()
     })
     .then(() => {
         return new Promise((resolve, reject) => {
-            console.log('Processing data...')
+            console.log('Processing data...') //eslint-disable-line
             fs.readFile(argv.source, 'utf8', (err, content) => {
                 if (err) return reject(err)
                 let entries = content.split('^')
@@ -50,14 +51,15 @@ mongodb.connect(config.MongoURI)
                                     // a hack to deal with duplicate coords
                                     .map((x, i) => {
                                         /* Here we change contour a bit to make MongoDB geospatial indexing possible. 
-                                         * Because Mongo doesnt allow duplicate vertices in contour, we enlarge contour a bit to avoid duplicate vertices.
-                                         * Max error introduced with this operation is about 100 meters in equator which is acceptable in this use case.
+                                         * Because Mongo doesnt allow duplicate vertices in contour, we enlarge contour a bit to avoid 
+                                         * duplicate vertices and crossing edges.
+                                         * Max error introduced with this operation is about 60 meters in equator 
+                                         * and the lesser the further from equator, which is acceptable in this use case.
                                          * */
-                                            let xOffset = 0.0008*Math.sin((i/180)*Math.PI)
-                                            let yOffset = 0.0008*Math.cos((i/180)*Math.PI)
-                                            x[0]+=xOffset
-                                            x[1]+=yOffset
-                                        // }
+                                        let xOffset = 0.0007*Math.sin((i/180)*Math.PI)
+                                        let yOffset = 0.0007*Math.cos((i/180)*Math.PI)
+                                        x[0]+=xOffset
+                                        x[1]+=yOffset
                                         return x
                                     })
                                     .reverse()
@@ -73,12 +75,12 @@ mongodb.connect(config.MongoURI)
 
     })
     .then((entries) => {
-        console.log('Inserting to DB...')
-        return DB.collection('antennas').insert(entries)
+        console.log('Inserting to DB...') //eslint-disable-line
+        return DB.collection(collection).insert(entries)
     })
     .then(()=>{
-        console.log('Building index...')
-        return DB.collection('antennas').createIndex({coverage:'2dsphere'})
+        console.log('Building index...') //eslint-disable-line
+        return DB.collection(collection).createIndex({coverage:'2dsphere'})
     })
 
 
@@ -86,7 +88,7 @@ mongodb.connect(config.MongoURI)
         DB.close()
     })
     .catch((e) => {
-        console.error(e)
+        console.error(e) //eslint-disable-line
         DB && DB.close()
     })
 

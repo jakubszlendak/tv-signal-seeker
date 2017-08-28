@@ -1,17 +1,13 @@
-var isDev = process.env.NODE_ENV == "development" ?
-    true :
-    false
+const isTesting = process.env.NODE_ENV == 'e2e_testing'
 
 
+let testDbURI =  process.env.TV_TESTING_MONGODB_URI || `mongodb://localhost/test`
 
 module.exports = {
-    isDev,
-    MongoURI: process.env.TV_MONGODB_URI || `mongodb://localhost/tv`,
+    // If testing env, connect to test DB, otherwise use URI from env
+    MongoURI: isTesting? testDbURI : process.env.TV_MONGODB_URI || `mongodb://localhost/tv`,
     MongoConfig: {},
     auth: {
         jwtSecret: process.env.TV_JWT_SECRET || 'secretsecret'
-    },
-    session: {
-        secret: process.env.SESSION_SECRET || 'aldsfncxvxocugsdfgnssdflkjh'
     }
 }
