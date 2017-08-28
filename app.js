@@ -1,12 +1,9 @@
 const express = require('express')
-const path = require('path')
-const favicon = require('serve-favicon')
 const morgan = require('morgan')
-const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const mongo = require('mongodb')
 const jwt = require('express-jwt')
-
+const helmet = require('helmet')
 const query = require('./routes/query')
 
 const config = require('./config')
@@ -31,6 +28,7 @@ mongo.connect(config.MongoURI, config.MongoConfig, function (err, DB) {
   // app.set('views', path.join(__dirname, 'views'))
   // app.set('view engine', 'jade')
 
+  app.use(helmet())
   app.use(morgan('common'))
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({
