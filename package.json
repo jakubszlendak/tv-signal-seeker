@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-    "test": "mocha"
+    "test": "mocha test/unit",
+    "e2e": "mocha test/e2e",
+    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --  test/ --opts test/mocha.opts -R spec"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.1",
+    "istanbul": "^0.4.5",
     "mocha": "^3.5.0",
     "nodemon": "^1.11.0",
     "sinon": "^3.2.1",

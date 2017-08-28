@@ -6,49 +6,49 @@ const APIError = require('../APIError')
 module.exports = {
     queryTVAntennas: function queryTVAntennas(req, res, next) {
         debug('queryTVAntennas()')
-        Promise.resolve()
-        // validate input
+        return Promise.resolve()
             .then(() => {
+                // validate input
                 let lat = req.query.lat
                 let lon = req.query.lon
 
-                // validator throws if param is not string
-                try {
-                    if (!validator.isFloat(lat, { min: -90, max: +90 })) throw new APIError('Invalid Query', 'Invalid latitude value', 400)
-                    if (!validator.isFloat(lon, { min: -180, max: +180 })) throw new APIError('Invalid Query', 'Invalid longitude value', 400)
-                } catch (error) {
-                    throw error instanceof APIError? error : new APIError('Invalid Query', 'Query parameters are invalid', 400)
-                }
+                if (!validator.isFloat('' + lat, {
+                        min: -90,
+                        max: +90
+                    })) throw new APIError('Invalid Query', 'Invalid latitude value', 400)
+                if (!validator.isFloat('' + lon, {
+                        min: -180,
+                        max: +180
+                    })) throw new APIError('Invalid Query', 'Invalid longitude value', 400)
+
 
                 let query = {
                     coverage: {
                         $geoIntersects: {
                             $geometry: {
                                 type: 'Point',
-                                coordinates: [ +lon, +lat ]
+                                coordinates: [+lon, +lat]
                             }
                         }
                     }
                 }
 
-                let projection = {_id: 0, coverage: 0}
+                // supress coverage contour from DB response to save time&bandwith
+                let projection = {
+                    _id: 0,
+                    coverage: 0
+                }
 
                 return req.DB.collection('antennas').find(query, projection).toArray()
             })
-            .then((queryResults)=>{
+            .then((queryResults) => {
                 debug('queryResult=', queryResults)
-                
+
                 let response = {
                     stations: queryResults
                 }
 
-                return res.json(response)
+                return Promise.resolve(response)
             })
-            .catch(next)
-
-
-        
-
-
     }
 }

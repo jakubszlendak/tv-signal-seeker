@@ -1,0 +1,4 @@
+--require test/common
+--check-leaks
+--globals database
+--recursive
