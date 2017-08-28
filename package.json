@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
+    "start.prod": "pm2 start bin/www --name tv",
     "test": "mocha test/unit",
     "e2e": "NODE_ENV=e2e_testing mocha test/e2e",
     "coverage": "NODE_ENV=e2e_testing ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --  test/ --opts test/mocha.opts -R spec"
@@ -19,6 +20,7 @@
     "mongodb": "^2.2.31",
     "morgan": "~1.8.1",
     "node-validator": "^0.1.27",
+    "pm2": "^2.6.1",
     "serve-favicon": "~2.4.2",
     "tracer": "^0.8.11",
     "validator": "^8.1.0"

@@ -28,7 +28,7 @@ mongodb.connect(config.MongoURI)
                         let item =  {
                             id: +line[0],
                             service: line[1],
-                            description: line[2],
+                            description: line[2].trim(),
                             station: {
                                 type: "Point",
                                 coordinates: line[3].split(',').map(x => +x).reverse()
